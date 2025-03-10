@@ -1,0 +1,14 @@
+digraph G {
+    rankdir = LR;
+    bgcolor="#C0C0C0";
+
+    node000 [shape=Mrecord; style=filled; fillcolor="blue:white"; label=" { value: 50 } | {next: 1} | {prev: -1} "];
+    node001 [shape=Mrecord; style=filled; fillcolor="blue:white"; label=" { value: 20 } | {next: -1} | {prev: 0} "];
+
+    node000 -> node001 [style=bold; weight=1000; color=red; ];
+    tail [shape=ellipse; style=filled; color=lightcoral; label="TAIL"];
+    tail -> node001 [style=dashed; color=red; ];
+    node001 -> node000 [weight=0; color= green; constraint=false; ];
+    head [shape=ellipse; style=filled; color=lightblue; label="HEAD"];
+    head -> node000 [style=dashed; color=blue; ];
+}

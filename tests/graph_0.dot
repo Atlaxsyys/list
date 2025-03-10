@@ -1,0 +1,11 @@
+digraph G {
+    rankdir = LR;
+    bgcolor="#C0C0C0";
+
+    node000 [shape=Mrecord; style=filled; fillcolor="blue:white"; label=" { value: 50 } | {next: -1} | {prev: -1} "];
+
+    tail [shape=ellipse; style=filled; color=lightcoral; label="TAIL"];
+    tail -> node000 [style=dashed; color=red; ];
+    head [shape=ellipse; style=filled; color=lightblue; label="HEAD"];
+    head -> node000 [style=dashed; color=blue; ];
+}
