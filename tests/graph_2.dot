@@ -2,9 +2,9 @@ digraph G {
     rankdir = LR;
     bgcolor="#C0C0C0";
 
-    node000 [shape=Mrecord; style=filled; fillcolor="blue:white"; label=" { value: 10 } | {next: 1} | {prev: -1} "];
-    node001 [shape=Mrecord; style=filled; fillcolor="blue:white"; label=" { value: 50 } | {next: 2} | {prev: 0} "];
-    node002 [shape=Mrecord; style=filled; fillcolor="blue:white"; label=" { value: 20 } | {next: -1} | {prev: 1} "];
+    node000 [shape=Mrecord; style=filled; fillcolor="blue:white"; label="{index: 0} | { value: 10 } | {next: 1} | {prev: -1} "];
+    node001 [shape=Mrecord; style=filled; fillcolor="blue:white"; label="{index: 1} | { value: 50 } | {next: 2} | {prev: 0} "];
+    node002 [shape=Mrecord; style=filled; fillcolor="blue:white"; label="{index: 2} | { value: 20 } | {next: -1} | {prev: 1} "];
 
     node000 -> node001 [style=bold; weight=1000; color=red; ];
     node001 -> node002 [style=bold; weight=1000; color=red; ];

@@ -4,12 +4,13 @@
 #include <stdlib.h>
 
 #include "list.h"
+#include <colour.h>
 
 List *list_constructor()
 {
     List *lst = (List*)calloc(1, sizeof(List));
 
-    if(lst == nullptr)
+    if (lst == nullptr)
     {
         fprintf(stderr, "lst is null pointer");
     }
@@ -23,77 +24,82 @@ List *list_constructor()
 
 void list_destructor(List* lst)
 {
-    assert(lst);
+    list_assert(lst);
 
     list_clear(lst);
-
     free(lst);
+
     lst = nullptr;
 }
 
-void insert_before_head(List *lst, elem_t value)                           //               +-------+    next   +-------+        +-------+         
+int insert_before_head(List *lst, elem_t value)                            //               +-------+    next   +-------+        +-------+         
 {                                                                          //               |       |   ----->  |       |        |       |                      
     assert(lst);                                                           //       <----   | value |   <-----  |       |   .... |       |             
                                                                            // prev = null   +-------+    prev   +-------+        +-------+                      
-    List_elem_t* new_node = (List_elem_t*)calloc(1, sizeof(List_elem_t)); //               ^curr_node            ^head            ^tail
-
-    new_node->value = value;
-    new_node->prev = nullptr;
-
-    if (lst->head == nullptr)
+    if (lst->head == nullptr)                                              //               ^curr_node            ^head            ^tail
     {
-        lst->head = new_node;
-        lst->tail = new_node;
-        new_node->next = nullptr;
-        new_node->prev = nullptr;
+        insert_first(lst, value);
+
+        return 0;
     }
- 
+    
     else
     {
+        List_elem_t* new_node = (List_elem_t*)calloc(1, sizeof(List_elem_t));
+
+        new_node->value = value;
+        new_node->prev = nullptr;
+
         new_node->next = lst->head;
         lst->head->prev = new_node;
         lst->head = new_node;
     }
 
     lst->size++;
+
+    list_assert(lst);
+
+    return 0;
 }
 
-void insert_after_tail(List *lst, elem_t value)                             //    +-------+       +-------+   next    +-------+  next = null                                                     
+int insert_after_tail(List *lst, elem_t value)                              //    +-------+       +-------+   next    +-------+  next = null                                                     
 {                                                                           //    |       |       |       |  ----->   |       | ----->                                      
-    assert(lst);                                                            //    |       |  .... |       |  <-----   | value |                                               
+    list_assert(lst);                                                       //    |       |  .... |       |  <-----   | value |                                               
                                                                             //    +-------+       +-------+   prev    +-------+                                                      
-    List_elem_t* new_node = (List_elem_t*)calloc(1, sizeof(List_elem_t));  //     ^head            ^tail             ^curr_node
-
-    new_node->value = value;
-    new_node->next = nullptr;
-
-    if(lst->tail == nullptr)
+    if (lst->tail == nullptr)                                               //     ^head            ^tail             ^curr_node
     {
-        lst->head = new_node;
-        lst->tail = new_node;
-        new_node->prev = nullptr;
+        insert_first(lst, value);
+
+        return 0;
     }
 
     else
     {
+        List_elem_t* new_node = (List_elem_t*)calloc(1, sizeof(List_elem_t));
+
+        new_node->next = nullptr;
+        new_node->value = value;
         new_node->prev = lst->tail;
+
         lst->tail->next = new_node;
         lst->tail = new_node;
     }
 
     lst->size++;
+
+    return 0;
 }
 
 List_elem_t* get_head__list(List* lst)
 {
-    assert(lst);
+    list_assert(lst);
 
     return lst->head;
 }
 
 List_elem_t* get_tail__list(List* lst)
 {
-    assert(lst);
+    list_assert(lst);
 
     return lst->tail;
 }
@@ -114,11 +120,11 @@ List_elem_t* get_prev_current_elem(List_elem_t* current_element)
 
 List_elem_t* find_to_number(List* lst, size_t number)
 {
-    assert(lst);
+    list_assert(lst);
 
     List_elem_t* current_element = get_head__list(lst);
 
-    for(size_t i = 0; i < number; i++)
+    for (size_t i = 0; i < number; i++)
     {
         current_element = get_next_current_elem(current_element);
     }
@@ -128,13 +134,13 @@ List_elem_t* find_to_number(List* lst, size_t number)
 
 List_elem_t* find_to_value(List* lst, elem_t value)
 {
-    assert(lst);
+    list_assert(lst);
 
     List_elem_t* current_element = get_head__list(lst);
 
-    while(current_element != nullptr)
+    for(int i = 0; i < lst->size; i++)
     {
-        if(current_element->value == value)
+        if (current_element->value == value)
         {
             return current_element;
         }
@@ -147,7 +153,7 @@ List_elem_t* find_to_value(List* lst, elem_t value)
 
 void insert_before_element(List* lst, size_t number, elem_t value)
 {
-    assert(lst);
+    list_assert(lst);
 
     List_elem_t* current_element = find_to_number(lst, number);
 
@@ -165,7 +171,7 @@ void insert_before_element(List* lst, size_t number, elem_t value)
 
 void insert_after_element(List* lst, size_t number, elem_t value)
 {
-    assert(lst);
+    list_assert(lst);
 
     List_elem_t* current_element = find_to_number(lst, number);
 
@@ -198,7 +204,7 @@ void insert_first(List* lst, elem_t value)
 
 void delete_element(List* lst, size_t number)
 {
-    assert(lst);
+    list_assert(lst);
 
     List_elem_t* current_element = find_to_number(lst, number);
 
@@ -208,14 +214,13 @@ void delete_element(List* lst, size_t number)
         lst->tail = nullptr;
     }
 
-    else if(current_element == lst->head)
+    else if (current_element == lst->head)
     {
         lst->head = get_next_current_elem(current_element);
         get_next_current_elem(current_element)->prev = nullptr;
-
     }
 
-    else if(current_element == lst->tail)
+    else if (current_element == lst->tail)
     {
         lst->tail = get_prev_current_elem(current_element);
         get_prev_current_elem(current_element)->next = nullptr;
@@ -237,7 +242,7 @@ void delete_element(List* lst, size_t number)
 
 void list_clear(List* lst)
 {
-    assert(lst);
+    list_assert(lst);
 
     List_elem_t* current_element = get_head__list(lst);
     List_elem_t* next_element = nullptr;
@@ -260,13 +265,15 @@ void list_clear(List* lst)
     lst->tail = nullptr;
 }
 
-
-void graph_dump(List* lst)
+int graph_dump(List* lst)
 {
+    list_assert(lst);
+
     static int file_counter = 0;
+
     char* dot_filename = (char*) calloc(SIZE_DOT_FILENAME, sizeof(char));
     char* png_filename = (char*) calloc(SIZE_PNG_FILENAME, sizeof(char));
-    char* command = (char*) calloc(SIZE_COMMAND, sizeof(char));
+    char* command      = (char*) calloc(SIZE_COMMAND, sizeof(char));
 
     sprintf(dot_filename, "../tests/graph_%d.dot", file_counter);
     sprintf(png_filename, "../tests/graph_%d.png", file_counter);
@@ -277,7 +284,7 @@ void graph_dump(List* lst)
     {
         perror("Error open file: ");
 
-        return;
+        return 0;
     }
 
     fprintf(file, "digraph G {\n");
@@ -289,8 +296,8 @@ void graph_dump(List* lst)
 
     while (current_element)
     {
-        fprintf(file, "    node%03d [shape=Mrecord; style=filled; fillcolor=\"blue:white\"; label=\" { value: %d } | {next: %d} | {prev: %d} \"];\n",
-                index, current_element->value,
+        fprintf(file, "    node%03d [shape=Mrecord; style=filled; fillcolor=\"blue:white\"; label=\"{index: %d} | { value: %d } | {next: %d} | {prev: %d} \"];\n",
+                index, index, current_element->value,
                 (current_element->next ? index + 1 : -1),
                 (current_element->prev ? index - 1 : -1));
 
@@ -302,6 +309,7 @@ void graph_dump(List* lst)
 
     current_element = lst->head;
     index = 0;
+
     while (current_element && current_element->next)
     {
         fprintf(file, "    node%03d -> node%03d [style=bold; weight=1000; color=red; ];\n",
@@ -318,6 +326,7 @@ void graph_dump(List* lst)
     }
 
     current_element = lst->tail;
+
     while (current_element && current_element->prev)
     {
         if (index > 0)
@@ -347,7 +356,101 @@ void graph_dump(List* lst)
     free(dot_filename);
     free(png_filename);
     free(command);
+
+    return 0;
 }
+
+int list_verify(List* lst)
+{
+    int list_errors = 0;
+    
+    if (lst == nullptr)
+    {
+        list_errors |= LIST_IS_NULL;
+
+        return list_errors;
+    }
+
+    if (lst->size < 0)
+    {
+        list_errors |= LIST_SIZE_BELOW_ZERO;
+    }
+
+    if (lst->head == nullptr)
+    {
+        list_errors |= LIST_HEAD_IS_NULL;
+    }
+
+    if (lst->tail == nullptr)
+    {
+        list_errors |= LIST_TAIL_IS_NULL;
+    }
+
+    return list_errors;
+}
+
+void conver_to_binary(int num)
+{
+    if (num == 0)
+    {
+        fprintf(stderr, "0");
+        return;
+    }
+    
+    int binary[32] = {};
+    int i = 0;
+    
+    while (num > 0)
+    {
+        binary[i] = num % 2;
+        num /= 2;
+        i++;
+    }
+    
+    for (int j = i - 1; j >= 0; j--)
+    {
+        fprintf(stderr, "%d", binary[j]);
+    }
+}
+
+const char* convert_to_str(int err)
+{
+    switch(err)
+    {
+        case LIST_IS_NULL:         { return "LIST_IS_NULL";         break;}
+        case LIST_SIZE_BELOW_ZERO: { return "LIST_SIZE_BELOW_ZERO"; break;}
+        // case LIST_HEAD_IS_NULL:    { return "LIST_HEAD_IS_NULL";    break;}
+        // case LIST_TAIL_IS_NULL:    { return "LIST_TAIL_IS_NULL";    break;}
+        default:                   { return "UNKNOWN ERROR"; }
+    }
+}
+
+void list_errors_output(int list_errors)
+{
+    fprintf(stderr, RED "Error: " CLEAR);
+
+    conver_to_binary(list_errors);
+
+    const char* str_error = convert_to_str(list_errors);
+
+    fprintf(stderr, RED " %s" CLEAR, str_error);
+}
+
+void list_assert(List* lst)
+{
+    int list_errors = list_verify(lst);
+
+    if (list_errors != 0)
+    {
+        list_errors_output(list_errors);
+        fprintf(stderr, PURPLE_TEXT("\nLINE: %d FUNCTION: %s FILE: %s\n"), __LINE__, __FUNCTION__, __FILE__);
+
+        abort();
+    }
+}
+
+
+
 
 
 
