@@ -9,16 +9,16 @@ int main()
     insert_first(lst, 50);
     graph_dump(lst);
 
-    insert_after_tail(lst, 20);
+    insert_after_tail(lst, &lst->tail, 20);
     graph_dump(lst);
 
-    insert_before_head(lst, 10);
+    insert_before_head(lst, &lst->head, 10);
     graph_dump(lst);
 
-    insert_after_element(lst, 1, 30);
+    insert_after_node(lst, 1, 30);
     graph_dump(lst);
 
-    delete_element(lst, 1);
+    delete_node(lst, 1);
     graph_dump(lst);
 
     list_destructor(lst);
