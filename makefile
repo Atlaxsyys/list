@@ -1,6 +1,16 @@
-.PHONY: all list
+.PHONY: all build run
 
-list:
+build:
 	make -C list build
-list-run:
+	
+run:
 	make -C list run
+
+list.o:
+	make -C list list.o
+
+main.o:
+	make -C list main.o
+
+clean:
+	make -C list clean
